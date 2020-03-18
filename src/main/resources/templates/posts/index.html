@@ -8,6 +8,10 @@
 <div th:each="post : ${posts}">
     <h1 th:text="${post.title}"></h1>
     <p th:text="${post.body}"></p>
+    <a th:href="@{|/posts/${post.id}/edit|}">Edit Post</a>
+    <form th:action="@{|/posts/delete/${post.id}|}" th:method="POST">
+        <button type="submit">Delete</button>
+    </form>
 </div>
 
 
