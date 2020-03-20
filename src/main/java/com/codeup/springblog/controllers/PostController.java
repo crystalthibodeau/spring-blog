@@ -1,8 +1,9 @@
 package com.codeup.springblog.controllers;
-
+import com.codeup.springblog.Services.MailService;
 import com.codeup.springblog.controllers.models.Post;
 import com.codeup.springblog.controllers.models.repositories.PostRepo;
 import com.codeup.springblog.controllers.models.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +13,19 @@ import java.util.ArrayList;
 @Controller
 public class PostController {
 
+
     private UserRepository userDao;
     private PostRepo postDao;
 
-    public PostController(UserRepository userDao, PostRepo postDao) {
+    @Autowired
+    private final MailService emailService;
+
+
+    public PostController(UserRepository userDao, PostRepo postDao, MailService emailService) {
         this.userDao = userDao;
         this.postDao = postDao;
+        this.emailService = emailService;
+
     }
     // These two next steps are often called dependency injection, where we create a Repository instance and initialize it in the controller class constructor.
 
@@ -25,41 +33,31 @@ public class PostController {
 
     //    GET	/posts	posts index page
     @GetMapping("/posts")
-public String getPost(Model model){
-    ArrayList<Post> postlist = new ArrayList<>();
-    postlist.add(new Post( "second post", "lorem arqrg qrgqergqr post 2 aegqerg lorem", userDao.getOne(1L)));
-    postlist.add(new Post("third post", "lorem arqrg qrgqergqr post 3 aegqerg lorem", userDao.getOne(1L)));
-    model.addAttribute("posts", postlist);
 
-    return "posts/index";
-//        model.addAttribute("posts", postDao.findAll());
-//        return "posts/index";
+public String getPost(Model model){
+//    ArrayList<Post> postlist = new ArrayList<>();
+//    postlist.add(new Post( "second post", "lorem arqrg qrgqergqr post 2 aegqerg lorem", userDao.getOne(1L)));
+//    postlist.add(new Post("third post", "lorem arqrg qrgqergqr post 3 aegqerg lorem", userDao.getOne(1L)));
+//    model.addAttribute("posts", postlist);
+
+//    return "posts/index";
+
+        model.addAttribute("posts", postDao.findAll());
+        return "posts/index";
 }
 
 //    GET	/posts/{id}	view an individual post
 
-    @GetMapping("/posts/{id}")
-    public String getPostByID(@PathVariable int id, Model model){
-        Post post1 = new Post(id, "Europas first post", "Remote learnig today..", userDao.getOne(1L));
-        model.addAttribute("title", post1.getTitle());
-        model.addAttribute("body", post1.getBody());
-        return "posts/show";
-    }
-
-    //    GET	/posts/create	view the form for creating a post
-    @GetMapping("/posts/create")
-    @ResponseBody
-    public String getCreateBlogPost(){
-        return "Here you will create a new post!";
-    }
-
-    //    POST	/posts/create	create a new post
-//    @PostMapping("/posts/create")
-    @RequestMapping(path = "/posts/create", method = RequestMethod.POST)
-    @ResponseBody
-    public String getPostCreateBlogPost() {
-        return "Your post will be submitted here!";
-    }
+@GetMapping("/posts/{id}")
+public String getPost(@PathVariable long id, Model model) {
+//    Post post = postDao.getOne(id);
+//    User user = userDao.getOne(1L);
+//    model.addAttribute("title", post.getTitle());
+//    model.addAttribute("body", post.getBody());
+//    model.addAttribute("email", user.getEmail());
+    model.addAttribute("post",postDao.getOne(id));
+    return "posts/show";
+}
 
 //    Implement edit and delete functionality.
 
@@ -87,11 +85,31 @@ public String getPost(Model model){
     }
 
     @PostMapping("/posts/{id}/edit")
-    public String updatePost(@PathVariable long id, @RequestParam String title, @RequestParam String body) {
+    public String updatePost(@ModelAttribute Post post, @PathVariable long id) {
         Post p = postDao.getOne(id);
-        p.setTitle(title);
-        p.setBody(body);
-        postDao.save(p);
+        p.setTitle(p.getTitle());
+        p.setBody(p.getBody());
+        postDao.save(post);
+        return "redirect:/posts";
+    }
+
+    @GetMapping("/posts/create")
+    public String createForm(Model model) {
+        model.addAttribute("post", new Post());
+        return "posts/create";
+    }
+
+    @PostMapping("/posts/create")
+    public String createPost(@ModelAttribute Post post) {
+//        Post post = new Post();
+        String emailSubject = "This is the email subject";
+        String emailBody = "Email Body Test";
+        post.setUser(userDao.getOne(1L));
+        postDao.save(post);
+        emailService.prepareAndSend(post, emailSubject, emailBody);
+//        post.setTitle(title);
+//        post.setBody(body);
+//        postDao.save(post);
         return "redirect:/posts";
     }
 }

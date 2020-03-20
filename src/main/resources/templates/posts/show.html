@@ -1,12 +1,16 @@
-<!Doctype>
-<html xmlns:th="http://www.thymeleaf.org" lang="">
-<head>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="partials/header.html :: header">
     <meta charset="UTF-8">
-    <title>Viewing posts</title>
+    <title>Viewing Post</title>
 </head>
 <body>
-<h1 th:text="${title}"></h1>
-<h1 th:text="${body}"></h1>
+
+<!--<nav th:replace="partials/navbar.html :: navbar"></nav>-->
+<h1 th:text="${post.title}"></h1>
+<h5 th:text="${post.body}"></h5>
+<!--<p th:text="${post.user.email}"></p>-->
+<!--<script :block th:replace="/partials/scripts :: scripts"></script>-->
 
 </body>
 </html>

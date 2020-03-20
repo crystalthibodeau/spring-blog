@@ -1,19 +1,46 @@
-<!Doctype>
-<html xmlns:th="http://www.thymeleaf.org" lang="">
-<head>
-    <meta charset="UTF-8">
-    <title>Viewing posts</title>
-</head>
+<!--<!Doctype>-->
+<!--<html xmlns:th="http://www.thymeleaf.org" lang="">-->
+<!--<head th:replace="partials/head :: head('All Posts')"></head>-->
+
+<!--<body>-->
+
+<!--<h1 style="padding-top: 25px; font-size: 55px;">Clearly Crystal Blog</h1>-->
+<!--<div th:each="post : ${posts}" style="padding: 15px; margin: 0">-->
+<!--    <a th:href="@{|/posts/${post.id}|}"><h2 th:text="${post.title}" style="padding: 0; margin: 0"></h2></a>-->
+<!--    <p th:text="${post.body}" style="padding: 0; margin: 0"></p>-->
+<!--    <a th:href="@{|/posts/${post.id}/edit|}" style="padding: 0; margin: 0"><button type="submit">Edit Post</button></a>-->
+<!--    <form th:action="@{|/posts/delete/${post.id}|}" th:method="POST" style="padding: 0; margin: 0">-->
+<!--        <button type="submit">Delete</button>-->
+<!--    </form>-->
+<!--</div>-->
+
+<!--<th:block th:replace="partials/scripts :: scripts" />-->
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="partials/head :: head('All Posts')"></head>
 <body>
-<div th:each="post : ${posts}">
-    <h1 th:text="${post.title}"></h1>
-    <p th:text="${post.body}"></p>
-    <a th:href="@{|/posts/${post.id}/edit|}">Edit Post</a>
-    <form th:action="@{|/posts/delete/${post.id}|}" th:method="POST">
-        <button type="submit">Delete</button>
-    </form>
+<div class="wrapper">
+    <nav th:replace="partials/navbar :: navbar"></nav>
+    <header class="container my-5">
+        <div class="jumbotron">
+            <h1 class="text-center display-1">Clearly Crystal</h1>
+        </div>
+    </header>
+    <main class="container d-flex">
+        <div class="row">
+            <div th:each="post : ${posts}" class="col-6">
+                <a th:href="@{|/posts/${post.id}|}"><h2 th:text="${post.title}"></h2></a>
+                <p th:text="${post.body}"></p>
+                <a th:href="@{|/posts/${post.id}/edit|}"><button type="submit">Edit Post</button></a>
+                <form th:action="@{|/posts/delete/${post.id}|}" th:method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    </main>
 </div>
-
-
+<th:block th:replace="partials/scripts :: scripts" />
 </body>
 </html>
