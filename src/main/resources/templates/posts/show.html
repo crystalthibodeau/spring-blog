@@ -1,16 +1,35 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head th:replace="partials/header.html :: header">-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Viewing Post</title>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--&lt;!&ndash;<nav th:replace="partials/navbar.html :: navbar"></nav>&ndash;&gt;-->
+<!--<h1 th:text="${post.title}"></h1>-->
+<!--<h5 th:text="${post.body}"></h5>-->
+<!--&lt;!&ndash;<p th:text="${post.user.email}"></p>&ndash;&gt;-->
+<!--&lt;!&ndash;<script :block th:replace="/partials/scripts :: scripts"></script>&ndash;&gt;-->
+
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="partials/header.html :: header">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
     <meta charset="UTF-8">
     <title>Viewing Post</title>
 </head>
 <body>
-
-<!--<nav th:replace="partials/navbar.html :: navbar"></nav>-->
 <h1 th:text="${post.title}"></h1>
-<h5 th:text="${post.body}"></h5>
-<!--<p th:text="${post.user.email}"></p>-->
-<!--<script :block th:replace="/partials/scripts :: scripts"></script>-->
-
+<p th:text="${post.body}"></p>
+<a th:href="'mailto:'+${post.user.email}"><span th:text="${post.user.email}"></span> </a>
+<br>
+<div sec:authorize="isAuthenticated()">
+    <div th:if="user.id == post.user.id">
+        <a th:href="@{|/posts/${post.id}/edit|}"><button>Edit Post</button></a>
+    </div>
+</div>
 </body>
 </html>

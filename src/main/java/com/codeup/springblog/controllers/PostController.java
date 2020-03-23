@@ -1,14 +1,14 @@
 package com.codeup.springblog.controllers;
 import com.codeup.springblog.Services.MailService;
-import com.codeup.springblog.controllers.models.Post;
-import com.codeup.springblog.controllers.models.repositories.PostRepo;
-import com.codeup.springblog.controllers.models.repositories.UserRepository;
+import com.codeup.springblog.models.Post;
+import com.codeup.springblog.models.User;
+import com.codeup.springblog.repositories.PostRepo;
+import com.codeup.springblog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 
 @Controller
 public class PostController {
@@ -29,8 +29,6 @@ public class PostController {
     }
     // These two next steps are often called dependency injection, where we create a Repository instance and initialize it in the controller class constructor.
 
-
-
     //    GET	/posts	posts index page
     @GetMapping("/posts")
 
@@ -50,13 +48,11 @@ public String getPost(Model model){
 
 @GetMapping("/posts/{id}")
 public String getPost(@PathVariable long id, Model model) {
-//    Post post = postDao.getOne(id);
-//    User user = userDao.getOne(1L);
-//    model.addAttribute("title", post.getTitle());
-//    model.addAttribute("body", post.getBody());
-//    model.addAttribute("email", user.getEmail());
+    model.addAttribute("user", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     model.addAttribute("post",postDao.getOne(id));
     return "posts/show";
+//    model.addAttribute("post",postDao.getOne(id));
+//    return "posts/show";
 }
 
 //    Implement edit and delete functionality.
@@ -72,10 +68,21 @@ public String getPost(@PathVariable long id, Model model) {
 
     @PostMapping("posts/delete/{id}")
     public String updatePost(@PathVariable long id) {
-//        Post post = postDao.getOne(id);
-//        postDao.delete(post);
-        postDao.deleteById(id);
+        System.out.println((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        User loggedInUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (loggedInUser.getId() == postDao.getOne(id).getUser().getId()){
+            // delete post
+            System.out.println(loggedInUser.getId());
+            System.out.println(postDao.getOne(id).getUser().getId());
+            System.out.println(postDao.getOne(id).getId());
+            postDao.deleteById(id);
+        }else{
+            return "redirect:/posts";
+        }
+
         return "redirect:/posts";
+//        postDao.deleteById(id);
+//        return "redirect:/posts";
     }
     @GetMapping("/posts/{id}/edit")
     public String editForm(@PathVariable long id, Model model) {

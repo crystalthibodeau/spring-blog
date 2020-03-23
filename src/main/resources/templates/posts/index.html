@@ -20,7 +20,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="partials/head :: head('All Posts')"></head>
-<body>
+<body class="mb-4">
 <div class="wrapper">
     <nav th:replace="partials/navbar :: navbar"></nav>
     <header class="container my-5">
@@ -28,14 +28,14 @@
             <h1 class="text-center display-1">Clearly Crystal</h1>
         </div>
     </header>
-    <main class="container d-flex">
-        <div class="row">
-            <div th:each="post : ${posts}" class="col-6">
+    <main class="container d-flex justify-content-center">
+        <div class="row ">
+            <div th:each="post : ${posts}" class="col-12 border p-4 mt-4">
                 <a th:href="@{|/posts/${post.id}|}"><h2 th:text="${post.title}"></h2></a>
                 <p th:text="${post.body}"></p>
-                <a th:href="@{|/posts/${post.id}/edit|}"><button type="submit">Edit Post</button></a>
+                <a th:href="@{|/posts/${post.id}/edit|}" class="float-right"><button type="submit" class="m-3">Edit Post</button></a>
                 <form th:action="@{|/posts/delete/${post.id}|}" th:method="POST">
-                    <button type="submit">Delete</button>
+                    <button type="submit" class="m-3 float-right">Delete</button>
                 </form>
             </div>
         </div>
